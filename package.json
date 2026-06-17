@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "tsx index.ts",
+    "dev": "nodemon --exec tsx index.ts",
     "migrate": "prisma migrate dev",
     "generate": "prisma generate",
     "studio": "prisma studio",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
+    "nodemon": "^3.1.14",
     "prisma": "^7.8.0",
     "tsx": "^4.22.4"
   }
