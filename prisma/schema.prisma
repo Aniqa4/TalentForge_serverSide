@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  EMPLOYER
+  CANDIDATE
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  REMOTE
+  INTERNSHIP
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+  PAUSED
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  SHORTLISTED
+  REJECTED
+  ACCEPTED
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  name        String
+  password    String
+  currentRole Role     @default(CANDIDATE)
+  roles       Role[]
+  createdAt   DateTime @default(now())
+
+  organizations OrganizationMember[]
+  applications  Application[]
+  postedJobs    Job[]
+}
+
+model Organization {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  website     String?
+  createdAt   DateTime @default(now())
+
+  members OrganizationMember[]
+  jobs    Job[]
+}
+
+model OrganizationMember {
+  id             Int        @id @default(autoincrement())
+  userId         Int
+  organizationId Int
+  memberRole     MemberRole @default(MEMBER)
+  joinedAt       DateTime   @default(now())
+
+  user         User         @relation(fields: [userId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([userId, organizationId])
+}
+
+model Job {
+  id             Int       @id @default(autoincrement())
+  title          String
+  description    String
+  location       String?
+  type           JobType
+  salaryMin      Int?
+  salaryMax      Int?
+  organizationId Int
+  postedById     Int
+  status         JobStatus @default(OPEN)
+  createdAt      DateTime  @default(now())
+
+  organization Organization  @relation(fields: [organizationId], references: [id])
+  postedBy     User          @relation(fields: [postedById], references: [id])
+  applications Application[]
+}
+
+model Application {
+  id          Int               @id @default(autoincrement())
+  jobId       Int
+  candidateId Int
+  coverLetter String?
+  status      ApplicationStatus @default(PENDING)
+  appliedAt   DateTime          @default(now())
+
+  job       Job  @relation(fields: [jobId], references: [id])
+  candidate User @relation(fields: [candidateId], references: [id])
+
+  @@unique([jobId, candidateId])
+}

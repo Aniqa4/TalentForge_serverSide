@@ -1,0 +1,18 @@
+enum Role {
+  EMPLOYER
+  CANDIDATE
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  name        String
+  password    String
+  currentRole Role     @default(CANDIDATE)
+  roles       Role[]
+  createdAt   DateTime @default(now())
+
+  organizations OrganizationMember[]
+  applications  Application[]
+  postedJobs    Job[]
+}

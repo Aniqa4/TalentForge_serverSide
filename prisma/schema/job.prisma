@@ -1,0 +1,31 @@
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  REMOTE
+  INTERNSHIP
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+  PAUSED
+}
+
+model Job {
+  id             Int       @id @default(autoincrement())
+  title          String
+  description    String
+  location       String?
+  type           JobType
+  salaryMin      Int?
+  salaryMax      Int?
+  organizationId Int
+  postedById     Int
+  status         JobStatus @default(OPEN)
+  createdAt      DateTime  @default(now())
+
+  organization Organization  @relation(fields: [organizationId], references: [id])
+  postedBy     User          @relation(fields: [postedById], references: [id])
+  applications Application[]
+}

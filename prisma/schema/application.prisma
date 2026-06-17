@@ -1,0 +1,21 @@
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  SHORTLISTED
+  REJECTED
+  ACCEPTED
+}
+
+model Application {
+  id          Int               @id @default(autoincrement())
+  jobId       Int
+  candidateId Int
+  coverLetter String?
+  status      ApplicationStatus @default(PENDING)
+  appliedAt   DateTime          @default(now())
+
+  job       Job  @relation(fields: [jobId], references: [id])
+  candidate User @relation(fields: [candidateId], references: [id])
+
+  @@unique([jobId, candidateId])
+}
